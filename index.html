@@ -50,14 +50,17 @@
 			window.onorientationchange = function() { document.body.scrollTop = 0; }
 
 			document.getElementById('yt-link').addEventListener('click', function(e) {
-				var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-				if (isMobile) {
+				if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
 					e.preventDefault();
-					// Try to open the YouTube app; fall back to browser after a short delay
-					window.location = 'vnd.youtube://www.youtube.com/@flofloland';
-					setTimeout(function() {
-						window.location = 'https://www.youtube.com/@flofloland';
+					var fallback = setTimeout(function() {
+						if (!document.hidden) {
+							window.location = 'https://www.youtube.com/@flofloland';
+						}
 					}, 1500);
+					document.addEventListener('visibilitychange', function() {
+						if (document.hidden) clearTimeout(fallback);
+					}, { once: true });
+					window.location = 'vnd.youtube://www.youtube.com/@flofloland';
 				}
 			});
 		</script>
